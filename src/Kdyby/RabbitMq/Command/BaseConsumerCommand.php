@@ -64,33 +64,6 @@ abstract class BaseConsumerCommand extends Command
 			define('AMQP_WITHOUT_SIGNALS', $input->getOption('without-signals'));
 		}
 
-		if (!AMQP_WITHOUT_SIGNALS && extension_loaded('pcntl')) {
-			if (!function_exists('pcntl_signal')) {
-				throw new \BadFunctionCallException("Function 'pcntl_signal' is referenced in the php.ini 'disable_functions' and can't be called.");
-			}
-
-			pcntl_signal(SIGTERM, function () {
-				if ($this->consumer) {
-					pcntl_signal(SIGTERM, SIG_DFL);
-					$this->consumer->forceStopConsumer();
-				}
-			});
-			pcntl_signal(SIGINT, function () {
-				if ($this->consumer) {
-					pcntl_signal(SIGINT, SIG_DFL);
-					$this->consumer->forceStopConsumer();
-				}
-			});
-			pcntl_signal(SIGHUP, function () {
-				if ($this->consumer) {
-					pcntl_signal(SIGHUP, SIG_DFL);
-					$this->consumer->forceStopConsumer();
-				}
-
-				// TODO: Implement restarting of consumer
-			});
-		}
-
 		if (defined('AMQP_DEBUG') === false) {
 			define('AMQP_DEBUG', (bool) $input->getOption('debug'));
 		}
@@ -107,6 +80,40 @@ abstract class BaseConsumerCommand extends Command
 
 		if ($routingKey = $input->getOption('route')) {
 			$this->consumer->setRoutingKey($routingKey);
+		}
+
+		if (!AMQP_WITHOUT_SIGNALS && extension_loaded('pcntl')) {
+			if (!function_exists('pcntl_signal')) {
+				throw new \BadFunctionCallException("Function 'pcntl_signal' is referenced in the php.ini 'disable_functions' and can't be called.");
+			}
+
+			$this->consumer->onConsume[] = function() {
+				pcntl_signal(SIGTERM, function () {
+					if ($this->consumer) {
+						pcntl_signal(SIGTERM, SIG_DFL);
+						$this->consumer->forceStopConsumer();
+					}
+				});
+				pcntl_signal(SIGINT, function () {
+					if ($this->consumer) {
+						pcntl_signal(SIGINT, SIG_DFL);
+						$this->consumer->forceStopConsumer();
+					}
+				});
+				pcntl_signal(SIGHUP, function () {
+					if ($this->consumer) {
+						pcntl_signal(SIGHUP, SIG_DFL);
+						$this->consumer->forceStopConsumer();
+					}
+
+					// TODO: Implement restarting of consumer
+				});
+			};
+			$this->consumer->onConsumeStop[] = function() {
+				pcntl_signal(SIGTERM, SIG_DFL);
+				pcntl_signal(SIGINT, SIG_DFL);
+				pcntl_signal(SIGHUP, SIG_DFL);
+			};
 		}
 	}
 
