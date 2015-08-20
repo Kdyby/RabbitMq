@@ -46,6 +46,11 @@ abstract class BaseConsumer extends AmqpMember
 	protected $idleTimeout = 0;
 
 	/**
+	 * @var int $endTime
+	 */
+	protected $endTime;
+
+	/**
 	 * @var array
 	 */
 	protected $qosOptions = array(
@@ -187,6 +192,36 @@ abstract class BaseConsumer extends AmqpMember
 	public function getIdleTimeout()
 	{
 		return $this->idleTimeout;
+	}
+
+
+
+	public function setEndTime($endTime)
+	{
+		$this->endTime = $endTime;
+	}
+
+
+
+	public function getEndTime()
+	{
+		return $this->endTime;
+	}
+
+
+
+	/**
+	 * Checks if elapsed time is greater or equal than time allowed for this process
+	 *
+	 * @return boolean
+	 */
+	protected function isTimeoutExceeded()
+	{
+		if ($this->getEndTime() === NULL) {
+			return FALSE;
+		}
+
+		return (time()) >= ($this->getEndTime());
 	}
 
 }
