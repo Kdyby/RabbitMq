@@ -49,21 +49,25 @@ class Producer extends AmqpMember implements IProducer
 	}
 
 
+    /**
+     * Publishes the message and merges additional properties with basic properties
+     *
+     * @param string $msgBody
+     * @param string $routingKey IF not provided or set to null, used default routingKey from configuration of this producer
+     * @param array $additionalProperties
+     */
+    public function publish($msgBody, $routingKey = '', $additionalProperties = array())
+    {
+        if ($this->autoSetupFabric) {
+            $this->setupFabric();
+        }
 
-	/**
-	 * Publishes the message and merges additional properties with basic properties
-	 *
-	 * @param string $msgBody
-	 * @param string $routingKey
-	 * @param array $additionalProperties
-	 */
-	public function publish($msgBody, $routingKey = '', $additionalProperties = [])
-	{
-		if ($this->autoSetupFabric) {
-			$this->setupFabric();
-		}
+        if ($this -> routingKey && (func_num_args() <= 1 || $routingKey === NULL)) {
+            // routingKey parameter not provided or set to NULL, use default
+            $routingKey = $this -> routingKey ?: '';
+        }
 
-		$msg = new AMQPMessage((string) $msgBody, array_merge($this->getBasicProperties(), $additionalProperties));
-		$this->getChannel()->basic_publish($msg, $this->exchangeOptions['name'], (string) $routingKey);
-	}
+        $msg = new AMQPMessage((string) $msgBody, array_merge($this->getBasicProperties(), $additionalProperties));
+        $this->getChannel()->basic_publish($msg, $this->exchangeOptions['name'], (string) $routingKey);
+    }
 }
