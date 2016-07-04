@@ -148,6 +148,7 @@ The array of additional properties allows you to alter the properties with which
 This way, for example, you can change the application headers.
 
 You are able to set default routing key in producer. You can provide it by `setRoutingKey` method or in configuration like bellow. Default routing key will be used for calls of `publish` method without second parrameter, or when second parameter is set to `NULL`. Be aware of setting second parameter to empty string, which is considered as "send without routing key". 
+
 ```yaml
 	...
 	producers:
