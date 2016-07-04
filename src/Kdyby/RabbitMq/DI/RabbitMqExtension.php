@@ -285,7 +285,7 @@ class RabbitMqExtension extends Nette\DI\CompilerExtension
 				->setClass('Kdyby\RabbitMq\IProducer')
 				->addSetup('setContentType', [$config['contentType']])
 				->addSetup('setDeliveryMode', [$config['deliveryMode']])
-                ->addSetup('setRoutingKey', array($config['routingKey']))
+				->addSetup('setRoutingKey', array($config['routingKey']))
 				->addTag(self::TAG_PRODUCER);
 
 			if (!empty($config['exchange'])) {
