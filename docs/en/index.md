@@ -147,7 +147,7 @@ Besides the message itself, the `Kdyby\RabbitMq\Producer::publish()` method also
 The array of additional properties allows you to alter the properties with which an `PhpAmqpLib\Message\AMQPMessage` object gets constructed by default.
 This way, for example, you can change the application headers.
 
-You are able to set default routing key in producer. You can provide it by `setRoutingKey` method or in configuration like bellow. Default routing key will be used for calls of `publish` method without second parrameter, or when second parameter is set to `NULL`. Be aware of setting second parameter to empty string, which is considered as "send without routing key". 
+You can set default routing key in producer context. You can provide it by `setRoutingKey` method or in configuration like bellow. Default routing key will be used in `publish` method calls with second argument ommited or set to `NULL`. Be aware, that setting second argument to empty string will lead to send empty string as routing key.
 
 ```yaml
 	...
