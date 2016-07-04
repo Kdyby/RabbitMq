@@ -56,7 +56,7 @@ class Producer extends AmqpMember implements IProducer
      * @param string $routingKey IF not provided or set to null, used default routingKey from configuration of this producer
      * @param array $additionalProperties
      */
-    public function publish($msgBody, $routingKey = '', $additionalProperties = array())
+    public function publish($msgBody, $routingKey = '', $additionalProperties = [])
     {
         if ($this->autoSetupFabric) {
             $this->setupFabric();
