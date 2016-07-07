@@ -160,7 +160,7 @@ class Consumer extends BaseConsumer
 
 	public function processMessage(AMQPMessage $msg)
 	{
-		$this->onConsume($this, $msg);
+		$this->onConsume($this, $msg, $this->queueOptions['name'], $this->callback);
 		try {
 			$processFlag = call_user_func($this->callback, $msg);
 			$this->handleProcessMessage($msg, $processFlag);
