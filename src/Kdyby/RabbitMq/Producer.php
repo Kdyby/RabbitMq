@@ -60,10 +60,6 @@ class Producer extends AmqpMember implements IProducer
 		if ($this->autoSetupFabric) {
 			$this->setupFabric();
 		}
-		if ($this -> routingKey && (func_num_args() <= 1 || $routingKey === NULL)) {
-			// routingKey parameter not provided or set to NULL, use default
-			$routingKey = $this -> routingKey;
-		}
 
 		if ($routingKey === '' || $routingKey === NULL) { // empty string or NULL
 			$routingKey = $this->routingKey;
