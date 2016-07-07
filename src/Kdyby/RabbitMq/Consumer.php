@@ -88,6 +88,13 @@ class Consumer extends BaseConsumer
 	}
 
 
+	/**
+	 * Registers listener to onStart event.
+	 * @param IConsumerStartListener $listener
+	 */
+	public function addConsumerStartListener(IConsumerStartListener $listener) {
+		$this -> onStart []= [$listener, 'onStartListener'];
+	}
 
 	public function consume($msgAmount)
 	{
