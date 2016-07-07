@@ -99,7 +99,6 @@ class MultipleConsumer extends Consumer
 		try {
 			$processFlag = call_user_func($this->queues[$queueName]['callback'], $msg);
 			$this->handleProcessMessage($msg, $processFlag);
-			$this->handleProcessMessage($msg, $processFlag);
 
 		} catch (TerminateException $e) {
 			$this->handleProcessMessage($msg, $e->getResponse());
