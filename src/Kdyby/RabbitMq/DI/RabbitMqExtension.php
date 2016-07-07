@@ -222,6 +222,14 @@ class RabbitMqExtension extends Nette\DI\CompilerExtension
 
 	public function beforeCompile()
 	{
+		$listeners = array_keys($this->getContainerBuilder()->findByType('Kdyby\RabbitMq\IConsumerStartListener'));
+		if ($listeners) { // setup onstart listener for every consumer if listeners are defined
+			foreach ($this->getContainerBuilder()->findByType('Kdyby\RabbitMq\Consumer') as $serviceDefinition) {
+				foreach ($listeners as $listener) {
+					$serviceDefinition->addSetup('addConsumerStartListener', $listener);
+				}
+			}
+		}
 		unset($this->getContainerBuilder()->parameters[$this->name]);
 	}
 
