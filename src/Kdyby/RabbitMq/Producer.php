@@ -48,6 +48,8 @@ class Producer extends AmqpMember implements IProducer
 		return ['content_type' => $this->contentType, 'delivery_mode' => $this->deliveryMode];
 	}
 
+
+
 	/**
 	 * Publishes the message and merges additional properties with basic properties
 	 *
