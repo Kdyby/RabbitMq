@@ -41,6 +41,7 @@ abstract class BaseConsumerCommand extends Command
 		$this
 			->addArgument('name', InputArgument::REQUIRED, 'Consumer Name')
 			->addOption('messages', 'm', InputOption::VALUE_OPTIONAL, 'Messages to consume', 0)
+			->addOption('timeout', 't', InputOption::VALUE_OPTIONAL, 'Timeout in seconds')
 			->addOption('route', 'r', InputOption::VALUE_OPTIONAL, 'Routing Key', '')
 			->addOption('memory-limit', 'l', InputOption::VALUE_OPTIONAL, 'Allowed memory for this process', null)
 			->addOption('debug', 'd', InputOption::VALUE_NONE, 'Enable Debugging')
@@ -86,6 +87,14 @@ abstract class BaseConsumerCommand extends Command
 
 		if (!is_null($input->getOption('memory-limit')) && ctype_digit((string) $input->getOption('memory-limit')) && $input->getOption('memory-limit') > 0) {
 			$this->consumer->setMemoryLimit($input->getOption('memory-limit'));
+		}
+
+		if (!is_null($input->getOption('timeout'))) {
+			if (ctype_digit((string)$input->getOption('timeout')) && $input->getOption('timeout') > 0) {
+				$this->consumer->setEndTime(time() + $input->getOption('timeout') - 1);
+			} else {
+				throw new \InvalidArgumentException("The -t option should be null or integer greater than 0");
+			}
 		}
 
 		if ($routingKey = $input->getOption('route')) {

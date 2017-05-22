@@ -108,6 +108,10 @@ class Consumer extends BaseConsumer
 			while (count($this->getChannel()->callbacks)) {
 				$this->maybeStopConsumer();
 
+				if ($this->isTimeoutExceeded()) {
+					$this->stopConsuming();
+				}
+
 				try {
 					$this->getChannel()->wait(NULL, FALSE, $this->getIdleTimeout());
 				} catch (AMQPTimeoutException $e) {
@@ -217,6 +221,29 @@ class Consumer extends BaseConsumer
 		}
 
 		return memory_get_usage(true) >= ($this->getMemoryLimit() * 1024 * 1024);
+	}
+
+
+
+	/**
+	 * Get idle timeout from consumer settings or count remaining time from script timeout
+	 *
+	 * @return int
+	 */
+	public function getIdleTimeout()
+	{
+		if ($this->getEndTime() === NULL) {
+			return parent::getIdleTimeout();
+		}
+
+		if (parent::getIdleTimeout() == 0) {
+			$timeout = $this->getEndTime() - time();
+		} else {
+			$timeout = min(parent::getIdleTimeout(), ($this->getEndTime() - time()));
+		}
+
+		// $timeout is 0 but do not wait forever
+		return max(1, $timeout);
 	}
 
 }

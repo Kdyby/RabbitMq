@@ -248,6 +248,15 @@ In the following example, this flag adds 256 MB memory limit. Consumer will be s
 $ php www/index.php rabbitmq:consumer -l 256
 ```
 
+Sometimes there is a problem with PHP scripts running long time and you can see errors like 'MySQL server has gone away'. 
+You can prevent this by using flag `-t`. In the following example script will be stopped after 10 seconds. 
+It can take longer time to stop script, but no message will be consumed after timeout exceed and script will end.
+
+```bash
+$ php www/index.php rabbitmq:consumer -t 10
+```
+
+
 If you want to remove all the messages awaiting in a queue, you can execute this command to purge this queue:
 
 ```bash
