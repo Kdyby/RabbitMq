@@ -10,6 +10,8 @@ use PhpAmqpLib\Message\AMQPMessage;
 /**
  * @author Alvaro Videla <videlalvaro@gmail.com>
  * @author Filip Procházka <filip@prochazka.su>
+ *
+ * @property array[]|callable[][] $queues
  */
 class MultipleConsumer extends Consumer
 {

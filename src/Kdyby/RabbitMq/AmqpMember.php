@@ -14,9 +14,13 @@ use PhpAmqpLib\Connection\AMQPLazyConnection;
  *
  * @property array $exchangeOptions
  * @property array $queueOptions
+ * @property AMQPChannel $channel
+ * @property-write string $routingKey
  */
-abstract class AmqpMember extends Nette\Object
+abstract class AmqpMember
 {
+
+    use Nette\SmartObject;
 
 	/**
 	 * @var Connection

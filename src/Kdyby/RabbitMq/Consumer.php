@@ -19,6 +19,8 @@ use PhpAmqpLib\Message\AMQPMessage;
  * @method onAck(Consumer $self, AMQPMessage $msg)
  * @method onError(Consumer $self, AMQPExceptionInterface $e)
  * @method onTimeout(Consumer $self)
+ *
+ * @property int $memoryLimit
  */
 class Consumer extends BaseConsumer
 {

@@ -11,6 +11,10 @@ use Nette\Utils\Callback;
  * @author Filip Procházka <filip@prochazka.su>
  *
  * @method onStop(BaseConsumer $self)
+ *
+ * @property string $consumerTag
+ * @property int $idleTimeout
+ * @property-write callable $callback
  */
 abstract class BaseConsumer extends AmqpMember
 {
