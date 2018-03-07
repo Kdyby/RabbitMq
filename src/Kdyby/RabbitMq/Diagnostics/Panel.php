@@ -11,7 +11,7 @@
 namespace Kdyby\RabbitMq\Diagnostics;
 
 use Kdyby\RabbitMq\Connection;
-use Nette;
+use Nette\SmartObject;
 use Nette\Utils\Html;
 use Tracy\Debugger;
 use Tracy\IBarPanel;
@@ -25,8 +25,10 @@ use Tracy\IBarPanel;
  * @property callable $failure
  * @property callable $success
  */
-class Panel extends Nette\Object implements IBarPanel
+class Panel implements IBarPanel
 {
+
+    use SmartObject;
 
 	/**
 	 * @var array

@@ -2,7 +2,7 @@
 
 namespace Kdyby\RabbitMq;
 
-use Nette;
+use Nette\SmartObject;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPLazyConnection;
 
@@ -15,8 +15,9 @@ use PhpAmqpLib\Connection\AMQPLazyConnection;
  * @property array $exchangeOptions
  * @property array $queueOptions
  */
-abstract class AmqpMember extends Nette\Object
+abstract class AmqpMember
 {
+    use SmartObject;
 
 	/**
 	 * @var Connection
