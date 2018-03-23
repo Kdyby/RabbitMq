@@ -10,7 +10,7 @@
 
 namespace Kdyby\RabbitMq\Diagnostics;
 
-use Kdyby\RabbitMq\Connection;
+use Kdyby\RabbitMq\IConnection;
 use Nette;
 use Nette\Utils\Html;
 use Tracy\Debugger;
@@ -135,10 +135,10 @@ class Panel implements IBarPanel
 
 
 	/**
-	 * @param Connection $connection
+	 * @param IConnection $connection
 	 * @return Panel
 	 */
-	public function register(Connection $connection)
+	public function register(IConnection $connection)
 	{
 		Debugger::getBar()->addPanel($this);
 		return $this;
