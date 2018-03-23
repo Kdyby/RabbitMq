@@ -21,7 +21,7 @@ abstract class AmqpMember
 
 
 	/**
-	 * @var Connection
+	 * @var IConnection
 	 */
 	protected $conn;
 
@@ -96,10 +96,10 @@ abstract class AmqpMember
 
 
 	/**
-	 * @param Connection $conn
+	 * @param IConnection $conn
 	 * @param string $consumerTag
 	 */
-	public function __construct(Connection $conn, $consumerTag = null)
+	public function __construct(IConnection $conn, $consumerTag = null)
 	{
 		$this->conn = $conn;
 		$this->consumerTag = empty($consumerTag) ? sprintf("PHPPROCESS_%s_%s", gethostname(), getmypid()) : $consumerTag;
