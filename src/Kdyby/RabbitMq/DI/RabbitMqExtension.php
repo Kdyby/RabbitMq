@@ -53,6 +53,15 @@ class RabbitMqExtension extends Nette\DI\CompilerExtension
 		'user' => NULL,
 		'password' => NULL,
 		'vhost' => '/',
+		'insist' => false,
+		'login_method' => 'AMQPLAIN',
+		'login_response' => null,
+		'locale' => 'en_US',
+		'connection_timeout' => 3,
+		'read_write_timeout' => 3,
+		'context' => null,
+		'keepalive' => false,
+		'heartbeat' => 0,
 	];
 
 	/**
@@ -251,7 +260,16 @@ class RabbitMqExtension extends Nette\DI\CompilerExtension
 					$config['port'],
 					$config['user'],
 					$config['password'],
-					$config['vhost']
+					$config['vhost'],
+					$config['insist'],
+					$config['login_method'],
+					$config['login_response'],
+					$config['locale'],
+					$config['connection_timeout'],
+					$config['read_write_timeout'],
+					$config['context'],
+					$config['keepalive'],
+					$config['heartbeat']
 				]);
 
 			$this->connectionsMeta[$name] = [
