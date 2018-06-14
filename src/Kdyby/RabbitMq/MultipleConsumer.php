@@ -89,13 +89,23 @@ class MultipleConsumer extends Consumer
 
 
 
+	public function stopConsuming()
+	{
+		foreach ($this->queues as $name => $options) {
+			$this->getChannel()->basic_cancel($this->getQueueConsumerTag($name));
+		}
+		$this->onStop($this);
+	}
+
+
+
 	public function processQueueMessage($queueName, AMQPMessage $msg)
 	{
 		if (!isset($this->queues[$queueName])) {
 			throw new QueueNotFoundException();
 		}
 
-		$this->onConsume($this, $msg);
+		$this->onConsume($this, $msg, $queueName, $this->queues[$queueName]['callback']);
 		try {
 			$processFlag = call_user_func($this->queues[$queueName]['callback'], $msg);
 			$this->handleProcessMessage($msg, $processFlag);

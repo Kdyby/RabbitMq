@@ -63,7 +63,15 @@ class Consumer extends BaseConsumer
 	 */
 	protected $memoryLimit;
 
+	/**
+	 * @var int $timeLimit
+	 */
+	protected $timeLimit;
 
+	/**
+	 * @var int Start timestamp
+	 */
+	private $startTimestamp;
 
 	/**
 	 * Set the memory limit
@@ -88,10 +96,42 @@ class Consumer extends BaseConsumer
 	}
 
 
+	/**
+	 * Set the time limit
+	 *
+	 * @param int $timeLimit
+	 */
+	public function setTimeLimit($timeLimit)
+	{
+		$this->timeLimit = $timeLimit;
+	}
+
+
+
+	/**
+	 * Get the time limit
+	 *
+	 * @return int
+	 */
+	public function getTimeLimit()
+	{
+		return $this->timeLimit;
+	}
+
+
+
+	/**
+	 * Registers listener to onStart event.
+	 * @param IConsumerStartListener $listener
+	 */
+	public function addConsumerStartListener(IConsumerStartListener $listener) {
+		$this -> onStart []= [$listener, 'onStartListener'];
+	}
 
 	public function consume($msgAmount)
 	{
 		$this->target = $msgAmount;
+		$this->startTimestamp = time();
 		$this->setupConsumer();
 		$this->onStart($this);
 
@@ -153,7 +193,7 @@ class Consumer extends BaseConsumer
 
 	public function processMessage(AMQPMessage $msg)
 	{
-		$this->onConsume($this, $msg);
+		$this->onConsume($this, $msg, $this->queueOptions['name'], $this->callback);
 		try {
 			$processFlag = call_user_func($this->callback, $msg);
 			$this->handleProcessMessage($msg, $processFlag);
@@ -198,7 +238,7 @@ class Consumer extends BaseConsumer
 		$this->consumed++;
 		$this->maybeStopConsumer();
 
-		if ($this->isRamAlmostOverloaded()) {
+		if ($this->isRamAlmostOverloaded() || $this->isTimeLimitExceeded()) {
 			$this->stopConsuming();
 		}
 	}
@@ -219,4 +259,17 @@ class Consumer extends BaseConsumer
 		return memory_get_usage(true) >= ($this->getMemoryLimit() * 1024 * 1024);
 	}
 
+
+	/**
+	 * Checks if consumer running time is greater or equal for time allowed for this process
+	 *
+	 * @return boolean
+	 */
+	protected function isTimeLimitExceeded() {
+		if ($this->getTimeLimit() === NULL) {
+			return FALSE;
+		}
+
+		return (time() - $this->startTimestamp) >= ($this->getTimeLimit());
+	}
 }

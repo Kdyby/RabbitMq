@@ -43,6 +43,7 @@ abstract class BaseConsumerCommand extends Command
 			->addOption('messages', 'm', InputOption::VALUE_OPTIONAL, 'Messages to consume', 0)
 			->addOption('route', 'r', InputOption::VALUE_OPTIONAL, 'Routing Key', '')
 			->addOption('memory-limit', 'l', InputOption::VALUE_OPTIONAL, 'Allowed memory for this process', null)
+			->addOption('time-limit', 't', InputOption::VALUE_OPTIONAL, 'Allowed time in seconds for this process', null)
 			->addOption('debug', 'd', InputOption::VALUE_NONE, 'Enable Debugging')
 			->addOption('without-signals', 'w', InputOption::VALUE_NONE, 'Disable catching of system signals');
 	}
@@ -86,6 +87,10 @@ abstract class BaseConsumerCommand extends Command
 
 		if (!is_null($input->getOption('memory-limit')) && ctype_digit((string) $input->getOption('memory-limit')) && $input->getOption('memory-limit') > 0) {
 			$this->consumer->setMemoryLimit($input->getOption('memory-limit'));
+		}
+
+		if (!is_null($input->getOption('time-limit')) && ctype_digit((string) $input->getOption('time-limit')) && $input->getOption('time-limit') > 0) {
+			$this->consumer->setTimeLimit($input->getOption('time-limit'));
 		}
 
 		if ($routingKey = $input->getOption('route')) {
