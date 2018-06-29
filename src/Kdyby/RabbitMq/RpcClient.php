@@ -34,13 +34,18 @@ class RpcClient extends AmqpMember
 	protected $expectSerializedResponse;
 
 	/**
+	 * @var string
+	 */
+	protected $contentType;
+
+	/**
 	 * @var int
 	 */
 	protected $timeout = 0;
 
 
 
-	public function initClient($expectSerializedResponse = true)
+	public function initClient($expectSerializedResponse = true, $contentType = 'text/plain')
 	{
 		list($this->queueName,,) = $this->getChannel()->queue_declare(
 			"",
@@ -51,6 +56,7 @@ class RpcClient extends AmqpMember
 		);
 
 		$this->expectSerializedResponse = $expectSerializedResponse;
+		$this->contentType = $contentType;
 	}
 
 
@@ -62,7 +68,7 @@ class RpcClient extends AmqpMember
 		}
 
 		$msg = new AMQPMessage($msgBody, [
-			'content_type' => 'text/plain',
+			'content_type' => $this->contentType,
 			'reply_to' => $this->queueName,
 			'delivery_mode' => 1, // non durable
 			'expiration' => $expiration * 1000,

@@ -89,6 +89,7 @@ class RabbitMqExtension extends Nette\DI\CompilerExtension
 	public $rpcClientDefaults = [
 		'connection' => 'default',
 		'expectSerializedResponse' => TRUE,
+		'contentType' => 'text/plain',
 	];
 
 	/**
@@ -428,7 +429,7 @@ class RabbitMqExtension extends Nette\DI\CompilerExtension
 
 			$builder->addDefinition($serviceName = $this->prefix('rpcClient.' . $name))
 				->setClass('Kdyby\RabbitMq\RpcClient', ['@' . $this->connectionsMeta[$config['connection']]['serviceId']])
-				->addSetup('initClient', [$config['expectSerializedResponse']])
+				->addSetup('initClient', [$config['expectSerializedResponse'], $config['contentType']])
 				->addTag(self::TAG_RPC_CLIENT)
 				->setAutowired(FALSE);
 
