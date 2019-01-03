@@ -20,7 +20,7 @@
 		"nette/di": "~2.4@dev",
 		"nette/utils": "~2.4@dev",
 
-		"php-amqplib/php-amqplib": "~2.6.2"
+		"php-amqplib/php-amqplib": "~2.8.1"
 	},
 	"require-dev": {
 		"nette/application": "~2.4@dev",
