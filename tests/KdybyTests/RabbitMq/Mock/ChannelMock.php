@@ -94,7 +94,8 @@ class ChannelMock extends \Kdyby\RabbitMq\Channel
 		$destination,
 		$source,
 		$routingKey = '',
-		$arguments = NULL,
+		$nowait = false,
+		$arguments = [],
 		$ticket = NULL
 	)
 	{
@@ -312,7 +313,7 @@ class ChannelMock extends \Kdyby\RabbitMq\Channel
 	)
 	{
 		$this->calls[] = [__FUNCTION__] + \get_defined_vars();
-		parent::basic_return($args, $msg);
+		return parent::basic_return($args, $msg);
 	}
 
 	// phpcs:disable SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint,SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint,PSR1.Methods.CamelCapsMethodName

@@ -25,9 +25,24 @@ class BaseAmqpTest extends \KdybyTests\RabbitMq\TestCase
 		$lazyConnection = new Connection('localhost', 123, 'lazy_user', 'lazy_password');
 		$consumer = new Consumer($lazyConnection);
 
-		Assert::exception(static function () use ($consumer): void {
-			$consumer->getChannel();
-		}, \ErrorException::class, 'stream_socket_client(): unable to connect to tcp://localhost:123 (Connection refused)');
+		if (\PHP_VERSION_ID >= 80000) {
+			Assert::exception(
+				static function () use ($consumer): void {
+					$consumer->getChannel();
+				},
+				\PhpAmqpLib\Exception\AMQPIOException::class,
+				'stream_socket_client(): Unable to connect to tcp://localhost:123 (Connection refused)'
+			);
+
+		} else {
+			Assert::exception(
+				static function () use ($consumer): void {
+					$consumer->getChannel();
+				},
+				\PhpAmqpLib\Exception\AMQPIOException::class,
+				'stream_socket_client(): unable to connect to tcp://localhost:123 (Connection refused)'
+			);
+		}
 	}
 
 }
