@@ -94,7 +94,8 @@ class ChannelMock extends \Kdyby\RabbitMq\Channel
 		$destination,
 		$source,
 		$routingKey = '',
-		$arguments = NULL,
+		$nowait = false,
+		$arguments = [],
 		$ticket = NULL
 	)
 	{

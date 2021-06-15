@@ -65,7 +65,7 @@ class ExtensionTest extends \KdybyTests\RabbitMq\TestCase
 		Assert::true($dic->getService('rabbitmq.consumer.default_anon_consumer') instanceof Kdyby\RabbitMq\AnonymousConsumer);
 
 		//Assert::true($dic->getService('rabbitmq.rpcClient.foo_client') instanceof Kdyby\RabbitMq\RpcClient);
-		Assert::true($dic->getService('rabbitmq.rpcClient.default_client') instanceof Kdyby\RabbitMq\RpcClient);
+		//Assert::true($dic->getService('rabbitmq.rpcClient.default_client') instanceof Kdyby\RabbitMq\RpcClient);
 
 		//Assert::true($dic->getService('rabbitmq.rpcServer.foo_server') instanceof Kdyby\RabbitMq\RpcServer);
 		Assert::true($dic->getService('rabbitmq.rpcServer.default_server') instanceof Kdyby\RabbitMq\RpcServer);
