@@ -27,6 +27,6 @@ jobs:
 
       - run: vendor/bin/parallel-lint -e php,phpt --exclude vendor .
 
-      - run: vendor/bin/tester -s -c ./tests/php.ini-unix ./tests/KdybyTests/
+      - run: vendor/bin/tester -s -j 1 -c ./tests/php.ini-unix ./tests/KdybyTests/
 
       - run: vendor/bin/phpstan analyse -l 2 -c phpstan.neon src tests/KdybyTests
