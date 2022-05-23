@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PurgeConsumerCommand extends \Symfony\Component\Console\Command\Command
 {
+	protected static $defaultName = 'rabbitmq:purge';
 
 	/**
 	 * @inject

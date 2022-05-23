@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AnonConsumerCommand extends \Kdyby\RabbitMq\Command\BaseConsumerCommand
 {
+	protected static $defaultName = 'rabbitmq:anon-consumer';
 
 	protected function configure(): void
 	{

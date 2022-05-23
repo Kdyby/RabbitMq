@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class StdInProducerCommand extends \Symfony\Component\Console\Command\Command
 {
+	protected static $defaultName = 'rabbitmq:stdin-producer';
 
 	/**
 	 * @inject

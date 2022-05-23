@@ -20,7 +20,6 @@ class RabbitMqExtension extends \Nette\DI\CompilerExtension
 {
 
 	public const TAG_COMMAND_KDYBY = 'kdyby.console.command';
-	public const TAG_COMMAND = 'console.command';
 	public const TAG_PRODUCER = 'kdyby.rabbitmq.producer';
 	public const TAG_CONSUMER = 'kdyby.rabbitmq.consumer';
 	public const TAG_RPC_CLIENT = 'kdyby.rabbitmq.rpc.client';
@@ -598,8 +597,7 @@ class RabbitMqExtension extends \Nette\DI\CompilerExtension
 			$builder->addDefinition($this->prefix('console.' . $i))
 				->setType($class)
 				->addTag(\Nette\DI\Extensions\InjectExtension::TAG_INJECT)
-				->addTag(self::TAG_COMMAND_KDYBY)
-				->addTag(self::TAG_COMMAND);
+				->addTag(self::TAG_COMMAND_KDYBY);
 		}
 	}
 
