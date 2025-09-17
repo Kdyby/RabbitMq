@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'rabbitmq:setup-fabric')]
 class SetupFabricCommand extends \Symfony\Component\Console\Command\Command
 {
 
@@ -21,7 +22,6 @@ class SetupFabricCommand extends \Symfony\Component\Console\Command\Command
 	protected function configure(): void
 	{
 		$this
-			->setName('rabbitmq:setup-fabric')
 			->setDescription('Sets up the Rabbit MQ fabric')
 			->addOption('debug', 'd', InputOption::VALUE_NONE, 'Enable Debugging');
 	}

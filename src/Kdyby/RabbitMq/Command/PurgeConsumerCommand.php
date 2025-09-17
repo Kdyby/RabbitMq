@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'rabbitmq:purge')]
 class PurgeConsumerCommand extends \Symfony\Component\Console\Command\Command
 {
 
@@ -21,7 +22,6 @@ class PurgeConsumerCommand extends \Symfony\Component\Console\Command\Command
 	protected function configure(): void
 	{
 		$this
-			->setName('rabbitmq:purge')
 			->setDescription('Purges all messages in queue associated with given consumer')
 			->addArgument('name', InputArgument::REQUIRED, 'Consumer Name')
 			->addOption('no-confirmation', NULL, InputOption::VALUE_NONE, 'Whether it must be confirmed before purging');

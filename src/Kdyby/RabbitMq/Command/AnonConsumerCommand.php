@@ -8,6 +8,7 @@ use Kdyby\RabbitMq\AnonymousConsumer;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'rabbitmq:anon-consumer')]
 class AnonConsumerCommand extends \Kdyby\RabbitMq\Command\BaseConsumerCommand
 {
 
@@ -15,7 +16,6 @@ class AnonConsumerCommand extends \Kdyby\RabbitMq\Command\BaseConsumerCommand
 	{
 		parent::configure();
 
-		$this->setName('rabbitmq:anon-consumer');
 		$this->setDescription('Starts an anonymouse configured consumer');
 
 		$this->getDefinition()->getOption('messages')->setDefault(1);
