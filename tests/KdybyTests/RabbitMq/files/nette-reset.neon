@@ -2,7 +2,6 @@ php:
 	date.timezone: Europe/Prague
 
 extensions:
-	console: Kdyby\Console\DI\ConsoleExtension
 
 services:
 	cacheStorage:
