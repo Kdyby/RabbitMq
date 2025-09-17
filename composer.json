@@ -23,7 +23,6 @@
 	},
 	"require-dev": {
 		"nette/bootstrap": "~3.2.1",
-		"latte/latte": "~2.11",
 		"tracy/tracy": "~2.10",
 		"phpstan/phpstan": "^2.1",
 		"php-coveralls/php-coveralls": "^2.1",
