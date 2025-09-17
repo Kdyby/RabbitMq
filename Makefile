@@ -2,7 +2,7 @@ lint:
 	vendor/bin/parallel-lint -e php,phpt --exclude vendor .
 
 phpstan:
-	vendor/bin/phpstan analyse -l 2 -c phpstan.neon src tests/KdybyTests
+	vendor/bin/phpstan analyse -c phpstan.neon --no-progress --no-ansi --memory-limit=-1
 
 run-tests:
 	vendor/bin/tester -s -c ./tests/php.ini-unix ./tests/KdybyTests/
