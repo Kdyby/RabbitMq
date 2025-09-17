@@ -13,24 +13,24 @@ class ChannelMock extends \Kdyby\RabbitMq\Channel
 	public $calls = [];
 
 	// phpcs:disable SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint,SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint,PSR1.Methods.CamelCapsMethodName
-	protected function channel_alert($args)
+	protected function channel_alert(\PhpAmqpLib\Wire\AMQPReader $reader): void
 	{
 		$this->calls[] = [__FUNCTION__] + \get_defined_vars();
-		parent::channel_alert($args);
+		parent::channel_alert($reader);
 	}
 
 	// phpcs:disable SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint,SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint,PSR1.Methods.CamelCapsMethodName
-	protected function channel_close($args)
+	protected function channel_close(\PhpAmqpLib\Wire\AMQPReader $reader): void
 	{
 		$this->calls[] = [__FUNCTION__] + \get_defined_vars();
-		parent::channel_close($args);
+		parent::channel_close($reader);
 	}
 
 	// phpcs:disable SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint,SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint,PSR1.Methods.CamelCapsMethodName
-	protected function channel_flow($args)
+	protected function channel_flow(\PhpAmqpLib\Wire\AMQPReader $reader): void
 	{
 		$this->calls[] = [__FUNCTION__] + \get_defined_vars();
-		parent::channel_flow($args);
+		parent::channel_flow($reader);
 	}
 
 	// phpcs:disable SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint,SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint,PSR1.Methods.CamelCapsMethodName
