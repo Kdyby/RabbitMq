@@ -22,6 +22,11 @@ abstract class AmqpMember
 	protected $conn;
 
 	/**
+	 * @var \Psr\Log\LoggerInterface
+	 */
+	protected $logger;
+
+	/**
 	 * @var \Kdyby\RabbitMq\Channel
 	 */
 	protected $ch;
@@ -89,9 +94,14 @@ abstract class AmqpMember
 	 */
 	protected $queueDeclared = FALSE;
 
-	public function __construct(Connection $conn, ?string $consumerTag = NULL)
+	public function __construct(
+		Connection $conn,
+		\Psr\Log\LoggerInterface $logger,
+		?string $consumerTag = NULL,
+	)
 	{
 		$this->conn = $conn;
+		$this->logger = $logger;
 		$this->consumerTag = empty($consumerTag) ? \sprintf('PHPPROCESS_%s_%s', \gethostname(), \getmypid()) : $consumerTag;
 
 		if (!($conn instanceof AMQPLazyConnection)) {

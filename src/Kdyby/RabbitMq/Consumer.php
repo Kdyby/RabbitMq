@@ -82,6 +82,13 @@ class Consumer extends \Kdyby\RabbitMq\BaseConsumer
 		$this->setupConsumer();
 		$this->onStart($this);
 
+		$this->logger->debug('Consumer started', [
+			'rabbitmq_consumer' => $this->exchangeOptions['name'],
+			'queue' => $this->queueOptions['name'],
+			'target_messages' => $msgAmount,
+			'memory_limit_mb' => $this->memoryLimit,
+		]);
+
 		$previousErrorHandler = \set_error_handler(static function (int $errno, string $errstr, string $errfile, int $errline) use (&$previousErrorHandler) {
 			if (!\preg_match('~stream_select\\(\\)~i', $errstr)) {
 				$args = \func_get_args();
@@ -96,16 +103,29 @@ class Consumer extends \Kdyby\RabbitMq\BaseConsumer
 				$this->maybeStopConsumer();
 
 				try {
+					$this->logger->debug('Waiting for incoming messages...');
 					$this->getChannel()->wait(NULL, FALSE, $this->getIdleTimeout());
 				} catch (\PhpAmqpLib\Exception\AMQPTimeoutException $e) {
 					$this->onTimeout($this);
 					// nothing bad happened, right?
 					// intentionally not throwing the exception
+					$this->logger->debug('Consumer idle timeout reached.', ['rabbitmq_consumer' => $this->exchangeOptions['name']]);
 				}
 			}
 
+			$this->logger->debug('Consumer loop finished normally', [
+				'rabbitmq_consumer' => $this->exchangeOptions['name'],
+				'consumed_messages' => $this->consumed,
+			]);
+
 		} catch (\PhpAmqpLib\Exception\AMQPRuntimeException $e) {
 			\restore_error_handler();
+
+			$this->logger->debug('AMQP runtime exception', [
+				'rabbitmq_consumer' => $this->exchangeOptions['name'],
+				'exception' => $e->getMessage(),
+				'force_stop' => $this->forceStop,
+			]);
 
 			// sending kill signal to the consumer causes the stream_select to return false
 			// the reader doesn't like the false value, so it throws AMQPRuntimeException
@@ -118,10 +138,22 @@ class Consumer extends \Kdyby\RabbitMq\BaseConsumer
 		} catch (AMQPExceptionInterface $e) {
 			\restore_error_handler();
 
+			$this->logger->debug('AMQP exception', [
+				'rabbitmq_consumer' => $this->exchangeOptions['name'],
+				'exception' => $e->getMessage(),
+				'exception_class' => \get_class($e),
+			]);
+
 			$this->onError($this, $e);
 			throw $e;
 
 		} catch (\Kdyby\RabbitMq\Exception\TerminateException $e) {
+			$this->logger->debug('Consumer terminated', [
+				'rabbitmq_consumer' => $this->exchangeOptions['name'],
+				'consumed_messages' => $this->consumed,
+				'target_messages' => $this->target,
+			]);
+
 			$this->stopConsuming();
 		}
 	}
@@ -137,6 +169,13 @@ class Consumer extends \Kdyby\RabbitMq\BaseConsumer
 	public function processMessage(AMQPMessage $msg): void
 	{
 		$this->onConsume($this, $msg);
+
+		$this->logger->debug('Processing message', [
+			'rabbitmq_consumer' => $this->exchangeOptions['name'],
+			'delivery_tag' => $msg->delivery_info['delivery_tag'] ?? null,
+			'routing_key' => $msg->delivery_info['routing_key'] ?? null,
+		]);
+
 		try {
 			$processFlag = \call_user_func($this->callback, $msg);
 			$this->handleProcessMessage($msg, $processFlag);
@@ -146,6 +185,13 @@ class Consumer extends \Kdyby\RabbitMq\BaseConsumer
 			throw $e;
 
 		} catch (\Throwable $e) {
+			$this->logger->debug('Exception during message processing', [
+				'rabbitmq_consumer' => $this->exchangeOptions['name'],
+				'delivery_tag' => $msg->delivery_info['delivery_tag'] ?? null,
+				'exception' => $e->getMessage(),
+				'exception_class' => \get_class($e),
+			]);
+
 			$this->onReject($this, $msg, IConsumer::MSG_REJECT_REQUEUE);
 			throw $e;
 		}
@@ -162,10 +208,21 @@ class Consumer extends \Kdyby\RabbitMq\BaseConsumer
 			$msg->delivery_info['channel']->basic_reject($msg->delivery_info['delivery_tag'], TRUE);
 			$this->onReject($this, $msg, $processFlag);
 
+			$this->logger->debug('Message rejected and requeued', [
+				'rabbitmq_consumer' => $this->exchangeOptions['name'],
+				'delivery_tag' => $msg->delivery_info['delivery_tag'],
+				'process_flag' => $processFlag,
+			]);
+
 		} elseif ($processFlag === IConsumer::MSG_SINGLE_NACK_REQUEUE) {
 			// NACK and requeue message to RabbitMQ
 			$msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag'], FALSE, TRUE);
 			$this->onReject($this, $msg, $processFlag);
+
+			$this->logger->debug('Message NACKed and requeued', [
+				'rabbitmq_consumer' => $this->exchangeOptions['name'],
+				'delivery_tag' => $msg->delivery_info['delivery_tag'],
+			]);
 
 		} else {
 			if ($processFlag === IConsumer::MSG_REJECT) {
@@ -173,10 +230,20 @@ class Consumer extends \Kdyby\RabbitMq\BaseConsumer
 				$msg->delivery_info['channel']->basic_reject($msg->delivery_info['delivery_tag'], FALSE);
 				$this->onReject($this, $msg, $processFlag);
 
+				$this->logger->debug('Message rejected and dropped', [
+					'rabbitmq_consumer' => $this->exchangeOptions['name'],
+					'delivery_tag' => $msg->delivery_info['delivery_tag'],
+				]);
+
 			} else {
 				// Remove message from queue only if callback return not false
 				$msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 				$this->onAck($this, $msg);
+
+				$this->logger->debug('Message acknowledged', [
+					'rabbitmq_consumer' => $this->exchangeOptions['name'],
+					'delivery_tag' => $msg->delivery_info['delivery_tag'],
+				]);
 			}
 		}
 
@@ -184,6 +251,13 @@ class Consumer extends \Kdyby\RabbitMq\BaseConsumer
 		$this->maybeStopConsumer();
 
 		if ($this->isRamAlmostOverloaded()) {
+			$this->logger->debug('Memory limit reached, stopping consumer', [
+				'rabbitmq_consumer' => $this->exchangeOptions['name'],
+				'memory_usage_mb' => \round(\memory_get_usage(TRUE) / 1024 / 1024, 2),
+				'memory_limit_mb' => $this->memoryLimit,
+				'consumed_messages' => $this->consumed,
+			]);
+
 			$this->stopConsuming();
 		}
 	}
