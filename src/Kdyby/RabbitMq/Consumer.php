@@ -112,6 +112,7 @@ class Consumer extends \Kdyby\RabbitMq\BaseConsumer
 					$this->logger->debug('Consumer idle timeout reached.', ['rabbitmq_consumer' => $this->exchangeOptions['name']]);
 
 					$this->getChannel()->getConnection()?->checkHeartBeat();
+					$this->getChannel()->getConnection()?->reconnect();
 				}
 			}
 
