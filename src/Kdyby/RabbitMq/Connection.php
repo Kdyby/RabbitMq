@@ -119,7 +119,10 @@ class Connection extends \PhpAmqpLib\Connection\AMQPLazyConnection implements \K
 	// phpcs:disable SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint,SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	public function channel($id = NULL): Channel
 	{
-		if (isset($this->channels[$id])) {
+		if (
+			$id !== NULL
+			&& isset($this->channels[$id])
+		) {
 			return $this->channels[$id];
 		}
 
