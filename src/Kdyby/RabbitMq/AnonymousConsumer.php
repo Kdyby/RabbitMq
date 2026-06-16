@@ -9,7 +9,7 @@ class AnonymousConsumer extends \Kdyby\RabbitMq\Consumer
 
 	public function __construct(Connection $conn)
 	{
-		parent::__construct($conn);
+		parent::__construct($conn, new \Psr\Log\NullLogger);
 
 		$this->setQueueOptions([
 			'name' => '',

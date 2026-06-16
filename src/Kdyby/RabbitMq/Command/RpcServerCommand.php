@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'rabbitmq:rpc-server')]
 class RpcServerCommand extends \Symfony\Component\Console\Command\Command
 {
 
@@ -21,7 +22,6 @@ class RpcServerCommand extends \Symfony\Component\Console\Command\Command
 	protected function configure(): void
 	{
 		$this
-			->setName('rabbitmq:rpc-server')
 			->setDescription('Starts a configured RPC server')
 			->addArgument('name', InputArgument::REQUIRED, 'Server Name')
 			->addOption('messages', 'm', InputOption::VALUE_OPTIONAL, 'Messages to consume', 0)

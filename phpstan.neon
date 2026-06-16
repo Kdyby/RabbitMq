@@ -1,7 +1,12 @@
 parameters:
+	level: 2
+	paths:
+		- src
+		- tests/KdybyTests
+
 	ignoreErrors:
 
-	excludes_analyse:
+	excludePaths:
 		- *src/Kdyby/RabbitMq/DI/ClassAliasMap.php
 
 

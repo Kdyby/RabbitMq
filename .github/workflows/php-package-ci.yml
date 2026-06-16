@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [ 7.4, 8.0, 8.1 ]
+        php: [ 8.2, 8.3, 8.4 ]
     steps:
       - uses: actions/checkout@v2
       - uses: shivammathur/setup-php@v2
@@ -17,7 +17,7 @@ jobs:
           php-version: ${{ matrix.php }}
       - uses: getong/rabbitmq-action@v1.2
         with:
-          rabbitmq version: '3.9.5-management-alpine'
+          rabbitmq version: '4.1.1-management-alpine'
           host port: 5672
           rabbitmq user: 'guest'
           rabbitmq password: 'guest'

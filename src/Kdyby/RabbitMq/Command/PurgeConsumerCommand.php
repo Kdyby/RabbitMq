@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'rabbitmq:purge')]
 class PurgeConsumerCommand extends \Symfony\Component\Console\Command\Command
 {
 
@@ -21,7 +22,6 @@ class PurgeConsumerCommand extends \Symfony\Component\Console\Command\Command
 	protected function configure(): void
 	{
 		$this
-			->setName('rabbitmq:purge')
 			->setDescription('Purges all messages in queue associated with given consumer')
 			->addArgument('name', InputArgument::REQUIRED, 'Consumer Name')
 			->addOption('no-confirmation', NULL, InputOption::VALUE_NONE, 'Whether it must be confirmed before purging');
@@ -32,7 +32,13 @@ class PurgeConsumerCommand extends \Symfony\Component\Console\Command\Command
 		$noConfirmation = (bool) $input->getOption('no-confirmation');
 
 		if (!$noConfirmation && $input->isInteractive()) {
-			$confirmation = $this->getHelper('dialog')->askConfirmation($output, \sprintf('<question>Are you sure you wish to purge "%s" queue? (y/n)</question>', $input->getArgument('name')), FALSE);
+			$question = new \Symfony\Component\Console\Question\ConfirmationQuestion(
+				question: \sprintf('<question>Are you sure you wish to purge "%s" queue? (y/n)</question>', $input->getArgument('name')),
+				default: false,
+			);
+			/** @var \Symfony\Component\Console\Helper\SymfonyQuestionHelper $helper */
+			$helper = $this->getHelper('dialog');
+			$confirmation = $helper->ask($input, $output, $question);
 			if (!$confirmation) {
 				$output->writeln('<error>Purging cancelled!</error>');
 

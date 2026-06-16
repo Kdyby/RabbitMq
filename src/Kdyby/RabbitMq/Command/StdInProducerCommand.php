@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'rabbitmq:stdin-producer')]
 class StdInProducerCommand extends \Symfony\Component\Console\Command\Command
 {
 
@@ -21,7 +22,6 @@ class StdInProducerCommand extends \Symfony\Component\Console\Command\Command
 	protected function configure(): void
 	{
 		$this
-			->setName('rabbitmq:stdin-producer')
 			->setDescription('Creates message from given STDIN and passes it to configured producer')
 			->addArgument('name', InputArgument::REQUIRED, 'Producer Name')
 			->addOption('debug', 'd', InputOption::VALUE_OPTIONAL, 'Enable Debugging', FALSE);
